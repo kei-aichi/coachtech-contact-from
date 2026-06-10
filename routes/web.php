@@ -9,6 +9,4 @@ Route::post('/confirm', [ContactController::class, 'confirm']);
 Route::post('/back', [ContactController::class, 'back']);
 Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/thanks', [ContactController::class, 'thanks']);
-Route::get('/admin', function () {
-    return view('admin.index');
-})->middleware('auth');
+Route::get('/admin', [ContactController::class, 'admin'])->middleware('auth');

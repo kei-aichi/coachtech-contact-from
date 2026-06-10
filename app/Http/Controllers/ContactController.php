@@ -50,4 +50,11 @@ class ContactController extends Controller
     {
         return view('contact.thanks');
     }
+
+    public function admin()
+    {
+        $contacts = Contact::with('category')->paginate(7);
+
+        return view('admin.index', compact('contacts'));
+    }
 }
