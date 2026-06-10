@@ -16,35 +16,52 @@
             Admin
         </h2>
 
-        <div class="w-full mb-8">
-            <div class="flex items-center gap-7">
+        <form action="/admin" method="GET">
+            <div class="w-full mb-8">
+                <div class="flex items-center gap-7">
 
-                <input type="text" placeholder="名前やメールアドレスを入力してください"
-                    class="w-[420px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none">
+                    <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="名前やメールアドレスを入力してください"
+                        class="w-[420px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none">
 
-                <select
-                    class="w-[120px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969]">
-                    <option>性別</option>
-                </select>
+                    <select name="gender"
+                        class="w-[120px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969]">
 
-                <select
-                    class="w-[260px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969]">
-                    <option>お問い合わせの種類</option>
-                </select>
+                        <option value="">性別</option>
+                        <option value="all" {{ request('gender') === 'all' ? 'selected' : '' }}>全て</option>
+                        <option value="1" {{ request('gender') === '1' ? 'selected' : '' }}>男性</option>
+                        <option value="2" {{ request('gender') === '2' ? 'selected' : '' }}>女性</option>
+                        <option value="3" {{ request('gender') === '3' ? 'selected' : '' }}>その他</option>
 
-                <input type="date"
-                    class="w-[180px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969]">
+                    </select>
 
-                <button class="w-[110px] h-14 bg-[#82756A] text-white text-lg">
-                    検索
-                </button>
+                    <select name="category_id"
+                        class="w-[260px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969']">
 
-                <button class="w-[120px] h-14 bg-[#D9C6B5] text-white text-lg">
-                    リセット
-                </button>
+                        <option value="">お問い合わせの種類</option>
 
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->content }}
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                    <input type="date" name="date" value="{{ request('date') }}"
+                        class="w-[180px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969]">
+
+                    <button type="submit" class="w-[110px] h-14 bg-[#82756A] text-white text-lg">
+                        検索
+                    </button>
+
+                    <a href="/admin"
+                        class="w-[120px] h-14 bg-[#D9C6B5] text-white text-lg flex items-center justify-center">
+                        リセット
+                    </a>
+
+                </div>
             </div>
-        </div>
+        </form>
 
         <div class="flex justify-between items-center mb-5">
             <button class="bg-[#F4F0ED] px-6 py-2">
