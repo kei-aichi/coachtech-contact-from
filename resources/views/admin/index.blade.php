@@ -35,7 +35,7 @@
                     </select>
 
                     <select name="category_id"
-                        class="w-[260px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969']">
+                        class="w-[260px] h-14 border border-[#E0DFDE] bg-[#F7F7F7] px-4 text-lg outline-none text-[#8B7969]">
 
                         <option value="">お問い合わせの種類</option>
 
@@ -144,15 +144,90 @@
                         </td>
 
                         <td class="text-center">
-                            <button class="border border-[#D9C6B5] px-5 py-1 text-[#D9C6B5] text-lg">
+                            <a href="{{ route('admin', ['contact_id' => $contact->id]) }}"
+                                class="border border-[#D9C6B5] px-5 py-1 text-[#D9C6B5] text-lg">
                                 詳細
-                            </button>
+                            </a>
                         </td>
 
                     </tr>
                 @endforeach
             </tbody>
         </table>
+
+        @if ($selectedContact)
+            <div class="fixed inset-0 flex items-center justify-center bg-black/5">
+
+                <div class="relative w-[850px] min-h-[760px] bg-white px-32 py-32 shadow-[4px_4px_6px_rgba(0,0,0,0.25)]">
+                    <a href="/admin"
+                        class="absolute top-8 right-8 w-10 h-10 border border-[#8B7969] rounded-full flex items-center justify-center text-2xl">
+                        ×
+                    </a>
+
+                    <div class="space-y-7 text-[#8B7969] text-lg">
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">お名前</p>
+                            <p>{{ $selectedContact->last_name }}　{{ $selectedContact->first_name }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">性別</p>
+                            <p>
+                                @if ($selectedContact->gender == 1)
+                                    男性
+                                @elseif ($selectedContact->gender == 2)
+                                    女性
+                                @else
+                                    その他
+                                @endif
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">メールアドレス</p>
+                            <p>{{ $selectedContact->email }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">電話番号</p>
+                            <p>{{ $selectedContact->tel }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">住所</p>
+                            <p>{{ $selectedContact->address }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">建物名</p>
+                            <p>{{ $selectedContact->building }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">お問い合わせの種類</p>
+                            <p>{{ $selectedContact->category->content }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-[220px_1fr]">
+                            <p class="font-bold">お問い合わせ内容</p>
+                            <p>{{ $selectedContact->detail }}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-32 flex justify-center">
+                        <form action="{{ route('contacts.destroy', $selectedContact) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit" class="bg-[#BA370D] px-10 py-3 text-white">
+                                削除
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        @endif
 
     </div>
 @endsection
