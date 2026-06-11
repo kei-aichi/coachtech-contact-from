@@ -2,7 +2,7 @@
 
 ## アプリケーション概要
 
-お問い合わせフォームから送信された内容をデータベースへ保存し、管理画面から問い合わせ内容の確認・検索・削除を行うことができるお問い合わせ管理システムです。
+お問い合わせフォームから送信された内容をデータベースへ保存し、管理画面から問い合わせ内容の確認・検索・削除・CSVエクスポートを行うことができるお問い合わせ管理システムです。
 
 ---
 
@@ -21,25 +21,19 @@
 
 ## 環境構築
 
-### 1. Laravelプロジェクトの作成
+### 1. リポジトリをクローン
 
 ```bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
-    laravelsail/php82-composer:latest \
-    composer create-project laravel/laravel:^10.0 coachtech-contact-form
+git clone https://github.com/kei-aichi/coachtech-contact-from.git
 ```
 
 ### 2. プロジェクトディレクトリへ移動
 
 ```bash
-cd coachtech-contact-form
+cd coachtech-contact-from
 ```
 
-### 3. Laravel Sailのインストール
+### 3. Composer依存パッケージのインストール
 
 ```bash
 docker run --rm \
@@ -48,84 +42,16 @@ docker run --rm \
     -w /var/www/html \
     -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
     laravelsail/php82-composer:latest \
-    composer require laravel/sail --dev
+    composer install
 ```
 
-### 4. Sailの設定ファイルを作成
-
-MySQLを選択してSailの設定ファイルを作成します。
+### 4. .envファイルの作成
 
 ```bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
-    laravelsail/php82-composer:latest \
-    php artisan sail:install --with=mysql
+cp .env.example .env
 ```
 
-### 5. Sailの起動
-
-```bash
-sail up -d
-```
-
-### 6. NPM依存パッケージのインストール
-
-```bash
-sail npm install
-```
-
-### 7. Tailwind CSSのインストール
-
-```bash
-sail npm install -D tailwindcss@^3.4.0 postcss autoprefixer
-```
-
-### 8. Tailwind CSS設定ファイルの作成
-
-```bash
-sail npx tailwindcss init -p
-```
-
-### 9. Tailwind CSSのテンプレートパス設定
-
-`tailwind.config.js`
-
-```js
-export default {
-    content: [
-        "./resources/**/*.blade.php",
-        "./resources/**/*.js",
-        "./resources/**/*.vue",
-    ],
-    theme: {
-        extend: {},
-    },
-    plugins: [],
-};
-```
-
-### 10. Tailwind CSSディレクティブの追加
-
-`resources/css/app.css`
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-### 11. Vite開発サーバーの起動
-
-新しいターミナルを開いて実行します。
-
-```bash
-sail npm run dev
-```
-
-### 12. .envファイルの設定
+### 5. .envファイルの設定
 
 `.env`
 
@@ -138,9 +64,52 @@ DB_USERNAME=sail
 DB_PASSWORD=password
 ```
 
-### 13. phpMyAdminの追加
+### 6. Sailエイリアスの設定（推奨）
 
-`compose.yaml` または `docker-compose.yml` の `mysql` サービスの後に以下を追加します。
+毎回 `./vendor/bin/sail` と入力する代わりに、以下のエイリアスを設定します。
+
+```bash
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+```
+
+### 7. Sailの起動
+
+```bash
+sail up -d
+```
+
+### 8. アプリケーションキーの生成
+
+```bash
+sail artisan key:generate
+```
+
+### 9. マイグレーションとシーディングの実行
+
+```bash
+sail artisan migrate --seed
+```
+
+### 10. NPM依存パッケージのインストール
+
+```bash
+sail npm install
+```
+
+### 11. Vite開発サーバーの起動
+
+```bash
+sail npm run dev
+```
+
+### 12. phpMyAdminについて
+
+`compose.yaml` または `docker-compose.yml` に phpMyAdmin が含まれていない場合は、`mysql` サービスと同じ階層に以下を追加してください。
+
+> **注意**
+>
+> `phpmyadmin` は `mysql` と同じ階層に記述してください。
+> インデントがずれると Docker が正常に起動しません。
 
 ```yaml
 phpmyadmin:
@@ -157,53 +126,18 @@ phpmyadmin:
         - mysql
 ```
 
-### 14. Sailの再起動
+追加した場合は、Sailを再起動してください。
 
 ```bash
 sail down
 sail up -d
 ```
 
-### 15. アプリケーションキーの生成
-
-```bash
-sail artisan key:generate
-```
-
-### 16. Laravelの動作確認
-
-ブラウザで以下にアクセスします。
-
-```text
-http://localhost
-```
-
-### 17. phpMyAdminの動作確認
-
-ブラウザで以下にアクセスします。
-
-```text
-http://localhost:8080
-```
-
-ログイン情報
-
-```text
-ユーザー名：sail
-パスワード：password
-```
-
-### 18. マイグレーションの実行
-
-```bash
-sail artisan migrate
-```
-
 ---
 
 ## ER図
 
-ER図を添付
+![ER図](./screenshots/er_diagram.png)
 
 ---
 
@@ -211,5 +145,15 @@ ER図を添付
 
 ### 開発環境
 
-- Laravel：http://localhost
+- お問い合わせフォーム：http://localhost/
+- ユーザー登録：http://localhost/register
+- ログイン：http://localhost/login
+- 管理画面：http://localhost/admin
 - phpMyAdmin：http://localhost:8080
+
+### phpMyAdminログイン情報
+
+```text
+ユーザー名：sail
+パスワード：password
+```
