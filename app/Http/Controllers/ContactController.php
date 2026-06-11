@@ -15,6 +15,7 @@ class ContactController extends Controller
 
         return view('contact.index', compact('categories'));
     }
+
     public function confirm(ContactRequest $request)
     {
         $contact = $request->validated();
@@ -57,7 +58,6 @@ class ContactController extends Controller
 
         $query = Contact::with('category');
 
-        // 検索条件をここに追加
         if ($request->filled('keyword')) {
             $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', '%' . $request->keyword . '%')
@@ -84,6 +84,20 @@ class ContactController extends Controller
 
         $contacts = $query->paginate(7)->appends($request->query());
 
-        return view('admin.index', compact('contacts', 'categories'));
+        $selectedContact = null;
+
+        if ($request->contact_id) {
+            $selectedContact = Contact::with('category')
+                ->find($request->contact_id);
+        }
+
+        return view('admin.index', compact('contacts', 'categories', 'selectedContact'));
+    }
+
+    public function destroy(Contact $contact)
+    {
+        $contact->delete();
+
+        return redirect('/admin');
     }
 }
