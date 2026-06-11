@@ -64,9 +64,14 @@
         </form>
 
         <div class="flex justify-between items-center mb-5">
+            {{--
             <button class="bg-[#F4F0ED] px-6 py-2">
                 エクスポート
             </button>
+            --}}
+            <a href="{{ route('export', request()->query()) }}" class="bg-[#F4F0ED] px-6 py-2">
+                エクスポート
+            </a>
 
             <div class="flex justify-end mb-2 mt-3">
                 <div class="flex border border-[#E0DFDE] text-[#8B7969]">

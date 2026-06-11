@@ -58,6 +58,81 @@ class ContactController extends Controller
 
         $query = Contact::with('category');
 
+        $query = $this->applySearchConditions($query, $request);
+
+        $contacts = $query->paginate(7)->appends($request->query());
+
+        $selectedContact = null;
+
+        if ($request->contact_id) {
+            $selectedContact = Contact::with('category')->find($request->contact_id);
+        }
+
+        return view('admin.index', compact('contacts', 'categories', 'selectedContact'));
+    }
+
+    public function destroy(Contact $contact)
+    {
+        $contact->delete();
+
+        return redirect('/admin');
+    }
+
+    public function export(Request $request)
+    {
+        $query = Contact::with('category');
+
+        $query = $this->applySearchConditions($query, $request);
+
+        $contacts = $query->get();
+
+        $csvHeader = [
+            'お名前',
+            '性別',
+            'メールアドレス',
+            '電話番号',
+            '住所',
+            '建物名',
+            'お問い合わせの種類',
+            'お問い合わせ内容',
+        ];
+
+        $csvData = [];
+        $csvData[] = $csvHeader;
+
+        foreach ($contacts as $contact) {
+            $csvData[] = [
+                $contact->last_name . ' ' . $contact->first_name,
+                $contact->gender == 1 ? '男性' : ($contact->gender == 2 ? '女性' : 'その他'),
+                $contact->email,
+                $contact->tel,
+                $contact->address,
+                $contact->building,
+                $contact->category->content,
+                $contact->detail,
+            ];
+        }
+
+        $callback = function () use ($csvData) {
+            $file = fopen('php://output', 'w');
+
+            // UTF-8 BOM
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            foreach ($csvData as $row) {
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return response()->streamDownload($callback, 'contacts.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
+    private function applySearchConditions($query, Request $request)
+    {
         if ($request->filled('keyword')) {
             $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', '%' . $request->keyword . '%')
@@ -82,22 +157,6 @@ class ContactController extends Controller
             $query->whereDate('created_at', $request->date);
         }
 
-        $contacts = $query->paginate(7)->appends($request->query());
-
-        $selectedContact = null;
-
-        if ($request->contact_id) {
-            $selectedContact = Contact::with('category')
-                ->find($request->contact_id);
-        }
-
-        return view('admin.index', compact('contacts', 'categories', 'selectedContact'));
-    }
-
-    public function destroy(Contact $contact)
-    {
-        $contact->delete();
-
-        return redirect('/admin');
+        return $query;
     }
 }
