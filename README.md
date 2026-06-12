@@ -8,8 +8,8 @@
 
 ## 使用技術
 
-- PHP 8.2
-- Laravel 10
+- PHP 8.5.5
+- Laravel 10.50.2
 - MySQL 8.4
 - Laravel Sail
 - Tailwind CSS 3.4
@@ -104,22 +104,38 @@ sail npm install
 sail npm run dev
 ```
 
-※ 開発中は起動したままにしてください。- "${FORWARD_PHPMYADMIN_PORT:-8080}:80"
+※ 開発中は起動したままにしてください。
+
+### 12. phpMyAdminについて
+
+`compose.yaml` または `docker-compose.yml` に phpMyAdmin が含まれていない場合は、`mysql` サービスと同じ階層に以下を追加してください。
+
+> **注意**
+>
+> `phpmyadmin` は `mysql` と同じ階層に記述してください。
+> インデントがずれると Docker が正常に起動しません。
+
+```yaml
+phpmyadmin:
+    image: "phpmyadmin:latest"
+    ports:
+        - "${FORWARD_PHPMYADMIN_PORT:-8080}:80"
     environment:
         PMA_HOST: mysql
         PMA_USER: "${DB_USERNAME}"
-PMA_PASSWORD: "${DB_PASSWORD}"
-networks: - sail
-depends_on: - mysql
-
-````
+        PMA_PASSWORD: "${DB_PASSWORD}"
+    networks:
+        - sail
+    depends_on:
+        - mysql
+```
 
 追加した場合は、Sailを再起動してください。
 
 ```bash
 sail down
 sail up -d
-````
+```
 
 ---
 

@@ -15,10 +15,14 @@ Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/thanks', [ContactController::class, 'thanks']);
 
 
-Route::get('/admin', [ContactController::class, 'admin'])->middleware('auth')->name('admin');
+Route::get('/admin', [ContactController::class, 'admin'])
+    ->middleware('auth')
+    ->name('admin');
 
-Route::delete('/contacts/{contact}', [ContactController::class, 'destroy'])->middleware('auth')
+Route::delete('/contacts/{contact}', [ContactController::class, 'destroy'])
+    ->middleware('auth')
     ->name('contacts.destroy');
 
 Route::get('/export', [ContactController::class, 'export'])
+    ->middleware('auth')
     ->name('export');
