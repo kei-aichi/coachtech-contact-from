@@ -55,6 +55,8 @@ cp .env.example .env
 
 `.env`
 
+以下のデータベース設定になっていることを確認してください。
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=mysql
@@ -116,7 +118,10 @@ sail npm run dev
 > インデントがずれると Docker が正常に起動しません。
 
 ```yaml
-phpmyadmin:
+services:
+    mysql:
+    ...
+    phpmyadmin:
     image: "phpmyadmin:latest"
     ports:
         - "${FORWARD_PHPMYADMIN_PORT:-8080}:80"
