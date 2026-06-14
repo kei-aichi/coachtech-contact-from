@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 課題要件外の追加実装です。
+ * アプリケーションの品質確認のため Feature Test を作成しています。
+ */
+
 namespace Tests\Feature;
 
 use App\Models\Category;
