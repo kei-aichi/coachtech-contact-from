@@ -30,18 +30,20 @@ class ContactController extends Controller
         return redirect('/')->withInput($request->all());
     }
 
-    public function store(Request $request)
+    public function store(ContactRequest $request)
     {
+        $contact = $request->validated();
+
         Contact::create([
-            'category_id' => $request->category_id,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'gender' => $request->gender,
-            'email' => $request->email,
-            'tel' => $request->tel1 . $request->tel2 . $request->tel3,
-            'address' => $request->address,
-            'building' => $request->building,
-            'detail' => $request->detail,
+            'category_id' => $contact['category_id'],
+            'first_name' => $contact['first_name'],
+            'last_name' => $contact['last_name'],
+            'gender' => $contact['gender'],
+            'email' => $contact['email'],
+            'tel' => $contact['tel1'] . $contact['tel2'] . $contact['tel3'],
+            'address' => $contact['address'],
+            'building' => $contact['building'] ?? null,
+            'detail' => $contact['detail'],
         ]);
 
         return redirect('/thanks');

@@ -27,7 +27,7 @@ class ContactRequest extends FormRequest
 
             'gender' => ['required'],
 
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/'],
 
             'tel1' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
             'tel2' => ['required', 'regex:/^[0-9]+$/', 'max:5'],
@@ -53,6 +53,7 @@ class ContactRequest extends FormRequest
 
             'email.required' => 'メールアドレスを入力してください',
             'email.email' => 'メールアドレスはメール形式で入力してください',
+            'email.regex' => 'メールアドレスはメール形式で入力してください',
 
             'tel1.required' => '電話番号を入力してください',
             'tel2.required' => '電話番号を入力してください',
