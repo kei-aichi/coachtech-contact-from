@@ -7,7 +7,7 @@
             Contact
         </h2>
 
-        <form action="/confirm" method="POST">
+        <form action="/confirm" method="POST" novalidate>
             @csrf
 
             <div class="space-y-9">
@@ -167,10 +167,10 @@
                             </select>
 
                             <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2
-                                        w-0 h-0
-                                        border-l-[12px] border-r-[12px]
-                                        border-t-[12px]
-                                        border-l-transparent border-r-transparent border-t-[#8B7969]">
+                                            w-0 h-0
+                                            border-l-[12px] border-r-[12px]
+                                            border-t-[12px]
+                                            border-l-transparent border-r-transparent border-t-[#8B7969]">
                             </span>
                         </div>
 
